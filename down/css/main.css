@@ -1,0 +1,207 @@
+/* DOTBDO GENERAL TEMPLATE */
+/* Document-wide settings */
+html {
+	height:100%;
+	width:100%;
+}
+body {
+	display:block;
+	height:100%;
+	width:100%;
+	font-family:Georgia, "Times New Roman", Times, serif;
+	font-size:14px;
+	color:#222;
+	background-color:#FAF4E8;
+}
+
+/* Useful Classes */
+.center {
+	text-align:center;
+}
+.right {
+	text-align:right;
+}
+.justify {
+	text-align:justify;
+}
+.bold {
+	font-weight:bold;
+}
+.floatleft {
+	float:left;
+}
+.floatright {
+	float:right;
+}
+.block {
+	display:block;
+}
+.inlineblock {
+	display:inline-block;
+}
+
+/* Headings */
+h1 {
+	font-size:36px;
+}
+h2 {
+	font-size:24px;
+}
+h3 {
+	font-size:18px;
+}
+h1, h2, h3 {
+	margin-top:5px;
+	margin-bottom:5px;
+	display:block;
+	color:#D15B1F;
+}
+
+
+
+/* Paragraph */
+p {
+	margin-bottom:5px;
+	line-height:15px;
+}
+
+/* Button/Div Templates */
+.button {
+	padding:6px;
+	background-color:rgba(0,0,0,0.15);
+	border-radius:4px;
+	border:1px solid rgba(0,0,0,0.15);
+}
+.button:hover {
+	background-color:rgba(0,0,0,0.30);
+	border:1px solid rgba(0,0,0,0.25);
+}
+
+.button2 {
+	padding:6px;
+	background-color:rgba(55,55,55,1);
+	border-radius:5px;
+	border:1px solid rgba(255,255,255,0.15);
+	background-image: -webkit-linear-gradient(top,rgba(204,204,204,0.12),rgba(51,51,51,0.12));
+	box-shadow:0 3px 5px rgba(0,0,0,0.2);
+	text-shadow:0 1px black;
+	color:#fff;
+}
+
+/* Lists */
+ul.circle {
+	list-style-type: circle;
+	list-style-position: inside;
+}
+ul.circle li {
+	margin:1px;
+}
+
+/* Anchors */
+a {
+	color:#333;
+}
+a:hover {
+	color:#111;
+}
+a:active {
+	color:black;
+}
+
+/* Wrapper */
+div.wrapper {
+	margin:0 auto;
+	width:960px;
+}
+div.extra {
+	display: inline-block;
+	margin:10px;
+	border-radius:5px;
+	background-color:rgba(30,155,30,0.2);
+	padding:15px;
+}
+
+/* Header */
+header {
+	display:block;
+	text-align:center;
+	margin-top:5px;
+	margin-bottom:10px;
+}
+header h1#title {
+	font-size: 48px;
+	display:block;
+}
+header p#subtitle {
+	display:block;
+}
+
+/* Navigation */
+nav {
+	margin:5px;
+}
+nav ul {
+	text-align:center;
+}
+nav ul li {
+	margin:3px;
+	display:inline-block;
+}
+nav ul li a {
+	color: #D15B1F;
+	text-decoration: none;
+}
+nav ul li a:hover {
+	color: #D15B1F;
+	text-decoration: underline;
+}
+
+
+/* Footer */
+footer {
+	display:block;
+	text-align:center;
+	margin:15px;
+}
+footer span {
+	padding:6px;
+	background-color:rgba(55,55,55,1);
+	border-radius:5px;
+	border:1px solid rgba(255,255,255,0.15);
+	background-image: -webkit-linear-gradient(top,rgba(204,204,204,0.12),rgba(51,51,51,0.12));
+	box-shadow:0 3px 5px rgba(0,0,0,0.2);
+	text-shadow:0 1px black;
+	color:#eee;
+}
+
+/* Torrentlist */
+ul#torrentlist {
+	background-color: #ffffff;
+	border: 1px #D15B1F dashed;
+}
+
+ul#torrentlist li {
+	padding: 8px;
+}
+
+ul#torrentlist li a.wget {
+	position: relative;
+	float:right;
+	text-decoration: none;
+	font-family: monospace;
+	border: 1px #D15B1F solid;
+	padding: 1px;
+	top: -2px;
+}
+
+ul#torrentlist li a.wget:hover {
+	background-color: #FAF4E8;
+}
+
+ul#torrentlist li:nth-child(even) {
+	background-color: #FAF4E8;
+}
+
+ul#torrentlist li:nth-child(even) a.wget:hover {
+	background-color: #FFFFFF;
+}

@@ -1,0 +1,208 @@
+@charset "utf-8";
+@media screen {
+	@font-face {
+		font-family:"Museo Sans 500";
+		src:url(../assets/MuseoSans_500.otf);
+	}
+}
+@media screen {
+	@font-face {
+		font-family:"Museo Sans 100";
+		src:url(../assets/MuseoSans-100.otf);
+	}
+}
+
+html {
+	height:100%;
+}
+body {
+	background-image:url(../assets/bg.png);
+	background-repeat:repeat;
+	margin: 0;
+	height:100%;
+	font-family:"Museo Sans 500", Arial, Helvetica, sans-serif;
+	color:#f8f8f8;
+}
+div#wrapper {
+	margin:0 auto 0 auto;
+	padding-top: 40px;
+	width:385px;
+}
+header h1 {
+	font-family:"Museo Sans 100", Tahoma, Geneva, sans-serif;
+	background-image:url(../assets/logo.png);
+	font-size:70px;
+	text-align:center;
+	text-indent:-9999px;
+	margin:0;
+}
+a {
+	text-decoration:none;
+	color:#e0e0e0;
+	transition:color 0.5s;
+}
+a:hover {
+	color:white;
+}
+nav ul {
+	list-style-type:none;
+	padding:0;
+	margin:0;
+	display:inline-block;
+}
+div#navwrapper {
+	margin-left:auto;
+	margin-right:auto;
+	text-align:center;
+}
+nav ul li {
+	padding:4px;
+	background-color:rgba(141,141,141,0.23);
+	display:inline-block;
+	text-shadow:0 1px black;
+	font-size:20px;
+	margin-right:5px;
+	box-shadow:5px 5px 5px rgba(0,0,0,0.35);
+	transition:background-color 0.5s;
+}
+nav ul li:hover {
+	background-color:rgba(141,141,141,0.4);
+}
+nav ul li:last-of-type {
+	margin-right:0;
+}
+
+ul#subdom {
+	padding:0;
+	margin:20px 0 0 0;
+	list-style-type:none;
+}
+ul#subdom li {
+	height:51px;
+	width:100%;
+	display:block;
+	margin-bottom:10px;
+}
+ul#subdom li:last-of-type {
+	margin-bottom:5px;
+}
+ul#subdom li div.colorblock {
+	height:51px;
+	width:12px;
+	margin:0 4px 0 0;
+	box-shadow:5px 5px 5px rgba(0,0,0,0.35);
+	opacity:1;
+	float:left;
+}
+
+ul#subdom li div.nameblock {
+	width:369px;
+	background:rgba(0,0,0,0.75);
+	background-repeat:no-repeat;
+	box-shadow:5px 5px 5px rgba(0,0,0,0.35);
+	margin:0;
+	height:51px;
+	display:inline-block;
+	position: relative;
+	transition: background 1s;
+}
+
+ul#subdom li div.nameblock:hover {
+	background:rgba(0,0,0,0.05);
+}
+
+ul#subdom li div.nameblock span {
+	font-family:"Museo Sans 100", "Futura", "Helvetica", "Arial", sans-serif;
+	color:#f8f8f8;
+	position:absolute;
+	top: 22px;
+	right: 6px;
+	font-size:22px;
+}
+
+ul#subdom li div.nameblock div.flap {
+	position: absolute;
+	right: 0;
+	bottom: 0;
+	height: 0;
+	width: 200px;
+	border-bottom: 32px solid;
+	border-bottom-color: rgba(0,0,0, 0.5);
+	border-left: 30px solid transparent;
+	transition: border-bottom-color 1s;
+}
+
+ul#subdom li:hover div.nameblock div.flap {
+	border-bottom-color: rgba(0,0,0,0.8);
+}
+
+footer p {
+	text-align:center;
+	font-size:11px;
+	text-shadow:0 1px black;
+}
+
+ul#subdom li.yellow div.colorblock {
+	background-color:#ffcc00;
+}
+ul#subdom li.blue div.colorblock {
+	background-color:#0aaff3;
+}
+ul#subdom li.red div.colorblock {
+	background-color:#c90000;
+}
+ul#subdom li.purple div.colorblock {
+	background-color:#b50dbf;
+}
+ul#subdom li.white div.colorblock {
+	background-color:white;
+}
+ul#subdom li.green div.colorblock {
+	background-color:#157639;
+}
+ul#subdom li.amber div.colorblock {
+	background-color:#ffbb66;
+}
+ul#subdom li.tfa div.colorblock {
+	background-color:#424242;
+}
+ul#subdom li.yellow {
+	background: url(../assets/yellow.jpg) no-repeat;
+	background-position: 16px 0;
+}
+ul#subdom li.blue {
+	background: url(../assets/blue.jpg) no-repeat;
+	background-position: 16px 0;
+}
+ul#subdom li.red {
+	background: url(../assets/red.jpg) no-repeat;
+	background-position: 16px 0;
+}
+ul#subdom li.purple {
+	background: url(../assets/purple.jpg) no-repeat;
+	background-position: 16px 0;
+}
+ul#subdom li.green {
+	background: url(../assets/green.jpg) no-repeat;
+	background-position: 16px 0;
+}
+ul#subdom li.white {
+	background: url(../assets/white.jpg) no-repeat;
+	background-position: 16px 0;
+}
+ul#subdom li.amber {
+	background: url(../assets/amber.jpg) no-repeat;
+	background-position: 16px 0;
+}
+ul#subdom li.tfa {
+	background: url(../assets/tfa.jpg) no-repeat;
+	background-position: 16px 0;
+}
+
+
+
+
+
+
+
+   

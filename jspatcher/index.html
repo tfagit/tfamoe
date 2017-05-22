@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>Teamspeak 3 Server Patcher</title>
+		
+		<!-- jQuery -->
+		<script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+		<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+		<!--[if lt IE 9]>
+			<script src="//oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+			<script src="//oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+		<![endif]-->
+		
+		<script>
+			if (!(window.File && window.FileReader && window.FileList && window.Blob)) {
+				alert('The File APIs are not fully supported in this browser.\nPlease upgrade to a more modern Browser!');
+			}
+			
+			// For todays date;
+			Date.prototype.today = function () { 
+				return ((this.getDate() < 10)?"0":"") + this.getDate() +"."+(((this.getMonth()+1) < 10)?"0":"") + (this.getMonth()+1) +"."+ this.getFullYear();
+			}
+
+			// For the time now
+			Date.prototype.timeNow = function () {
+				 return ((this.getHours() < 10)?"0":"") + this.getHours() +":"+ ((this.getMinutes() < 10)?"0":"") + this.getMinutes() +":"+ ((this.getSeconds() < 10)?"0":"") + this.getSeconds();
+			}
+			
+			function doLog(message) {
+				var debugLogEl = $(".log");
+				if (!debugLogEl)
+					return;
+				
+				var cd = new Date();
+				//var logString = "[" + cd.getDate() + "." + (cd.getMonth() + 1) + "." + cd.getFullYear() + " " + cd.getHours() + ":" + cd.getMinutes() + ":" + cd.getSeconds() + "'" + cd.getMilliseconds() + "]:" + message + "\n";
+				var logString = "[" + cd.today() + " " + cd.timeNow() + "]:" + message + "\n";
+				debugLogEl.append(logString);
+			}
+			
+			var patcherElements = {
+				w32: {},
+				w64: {},
+				l32: {},
+				l64: {},
+				b32: {},
+				b64: {},
+				mac: {}
+			};
+			var patcherData = {
+				normal: {
+					from: [
+						0x30, 0x6B, 0x03, 0x02, 0x07, 0x00, 0x02, 0x01, 0x30, 0x02, 0x30, 0x23, 0xD8, 0x92, 0x7F, 0x07,
+						0x13, 0x94, 0x1E, 0xBD, 0x04, 0x43, 0xAE, 0x26, 0x5B, 0x9F, 0x5F, 0x8A, 0xEF, 0x33, 0xC3, 0x75,
+						0xF3, 0x38, 0x32, 0x24, 0x64, 0xA6, 0xB7, 0xA8, 0x04, 0x8B, 0xE9, 0x3F, 0x05, 0xD8, 0xA8, 0x76,
+						0xFB, 0x85, 0x83, 0x59, 0x0E, 0xEF, 0x5A, 0xB4, 0x6B, 0xAA, 0x43, 0x02, 0x30, 0x54, 0xF6, 0xB7,
+						0x67, 0x03, 0xB6, 0x2B, 0xF6, 0x02, 0x08, 0xFA, 0x7A, 0xDE, 0xEA, 0x49, 0x77, 0xDD, 0x5C, 0x26,
+						0x08, 0xF6, 0x70, 0xE7, 0x62, 0x92, 0xAA, 0xD3, 0xDA, 0x70, 0xB5, 0x50, 0xC3, 0x6C, 0x42, 0x5D,
+						0x5E, 0x3B, 0xA7, 0x7E, 0x5A, 0xD4, 0xD9, 0x4A, 0xAB, 0x74, 0xB7, 0xF5, 0x9D,
+					],
+					to: [
+						0x30, 0x6B, 0x03, 0x02, 0x07, 0x00, 0x02, 0x01, 0x30, 0x02, 0x30, 0x36, 0x96, 0x01, 0x57, 0x7E,
+						0x78, 0x12, 0x11, 0x14, 0x5F, 0x36, 0xF9, 0x75, 0x76, 0xA3, 0xE7, 0xCB, 0x09, 0x8A, 0xDF, 0x53,
+						0xDE, 0x99, 0x77, 0xA3, 0xC1, 0x9D, 0xD5, 0xA0, 0x43, 0xBA, 0x88, 0x2E, 0xD2, 0xC6, 0x32, 0x23,
+						0xDF, 0x5B, 0xE9, 0x00, 0x02, 0xB4, 0xFD, 0x2A, 0x1D, 0x67, 0x7A, 0x02, 0x30, 0x51, 0x48, 0x79,
+						0xD6, 0x2D, 0x4F, 0x54, 0x3A, 0xEE, 0x4C, 0x9F, 0xB9, 0x0C, 0x52, 0x84, 0x85, 0xED, 0x33, 0xF4,
+						0xFE, 0x43, 0x80, 0x44, 0x08, 0x69, 0x9A, 0xA7, 0x5E, 0xA7, 0x48, 0xAD, 0xAA, 0xD7, 0xAD, 0x3D,
+						0x4C, 0x2E, 0x6A, 0xB8, 0xAD, 0x74, 0xF8, 0xAE, 0x38, 0x59, 0xC7, 0x55, 0xC2,
+					]
+				},
+				local: {
+					accountingTeamspeakCom: {
+						from: [
+							0x67, 0x64, 0x6F, 0x70, 0x68, 0x65, 0x6D, 0x6E,
+							0x66, 0x6A, 0x6E, 0x6A, 0x64, 0x67, 0x6B, 0x66,
+							0x64, 0x6A, 0x69, 0x66, 0x65, 0x63, 0x69, 0x64,
+							0x6F, 0x68, 0x67, 0x6E, 0x70, 0x6B, 0x66, 0x62,
+							0x6E, 0x6D, 0x66, 0x63, 0x6B, 0x61, 0x63, 0x68,
+							0x70, 0x6A, 0x61, 0x63, 0x69, 0x64, 0x62, 0x6B,
+						],
+						to: [
+							0x67, 0x6F, 0x6F, 0x64, 0x68, 0x65, 0x6D, 0x64,
+							0x65, 0x61, 0x6E, 0x70, 0x63, 0x6E, 0x6C, 0x70,
+							0x63, 0x64, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+							0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+							0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+							0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+						],
+						w32: {
+							from: [
+								0x00, 0x6A, 0x30, 0x68
+							],
+							to: [
+								0x00, 0x6A, 0x12, 0x68
+							],
+						},
+						w64: {
+							from: [
+								0x30, 0x00, 0x41, 0xB8, 0x30
+							],
+							to: [
+								0x30, 0x00, 0x41, 0xB8, 0x12
+							],
+						}
+					},
+					backupaccountingTeamspeakCom: {
+						from: [
+							0x67, 0x61, 0x6F, 0x6E, 0x68, 0x65, 0x6D, 0x6A,
+							0x66, 0x6A, 0x6D, 0x68, 0x63, 0x64, 0x6B, 0x70,
+							0x64, 0x65, 0x69, 0x6E, 0x62, 0x6A, 0x6A, 0x6A,
+							0x70, 0x67, 0x67, 0x66, 0x70, 0x6A, 0x65, 0x66,
+							0x69, 0x63, 0x65, 0x64, 0x6B, 0x65, 0x63, 0x6E,
+							0x6C, 0x6B, 0x62, 0x63, 0x6A, 0x6D, 0x62, 0x63,
+							0x67, 0x61, 0x6F, 0x68, 0x64, 0x6A, 0x6D, 0x63,
+							0x65, 0x64, 0x6E, 0x6B
+						],
+						to: [
+							0x67, 0x6F, 0x6F, 0x64, 0x68, 0x65, 0x6D, 0x64,
+							0x65, 0x61, 0x6E, 0x70, 0x63, 0x6E, 0x6C, 0x70,
+							0x63, 0x64, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+							0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+							0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+							0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+							0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+							0x00, 0x00, 0x00, 0x00
+						],
+						w32: {
+							from: [
+								0x00, 0x6A, 0x3C, 0x68
+							],
+							to: [
+								0x00, 0x6A, 0x12, 0x68
+							],
+						},
+						w64: {
+							from: [
+								0x30, 0x00, 0x41, 0xB8, 0x3C
+							],
+							to: [
+								0x30, 0x00, 0x41, 0xB8, 0x12
+							],
+						}
+					},
+					ipcheckTeamspeakCom: {
+						from: [
+							0x67, 0x6C, 0x70, 0x6D, 0x68, 0x65, 0x6D, 0x6B,
+							0x65, 0x6A, 0x6E, 0x65, 0x63, 0x6A, 0x6F, 0x63,
+							0x63, 0x64, 0x69, 0x68, 0x61, 0x6E, 0x6A, 0x6B,
+							0x70, 0x62, 0x68, 0x6D, 0x70, 0x63, 0x65, 0x64,
+							0x6D, 0x68, 0x62, 0x6A, 0x6B, 0x63, 0x63, 0x64,
+							0x6C, 0x6B
+						],
+						to: [
+							0x67, 0x6F, 0x6F, 0x64, 0x68, 0x65, 0x6D, 0x64,
+							0x65, 0x61, 0x6E, 0x70, 0x63, 0x6E, 0x6C, 0x70,
+							0x63, 0x64, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+							0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+							0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+							0x00, 0x00
+						],
+						w32: {
+							from: [
+								0x00, 0x6A, 0x2A, 0x68
+							],
+							to: [
+								0x00, 0x6A, 0x12, 0x68
+							],
+						},
+						w64: {
+							from: [
+								0x30, 0x00, 0x41, 0xB8, 0x2A
+							],
+							to: [
+								0x30, 0x00, 0x41, 0xB8, 0x12
+							],
+						}
+					},
+					ip80_190_145_215: {
+						from: [
+							0x64, 0x6B, 0x6C, 0x6D, 0x64, 0x6A, 0x6A, 0x64,
+							0x62, 0x66, 0x69, 0x68, 0x67, 0x6D, 0x70, 0x6E,
+							0x67, 0x64, 0x6E, 0x68, 0x65, 0x63, 0x6D, 0x66,
+							0x6C, 0x64, 0x64, 0x6A
+						],
+						to: [
+							0x64, 0x6B, 0x6C, 0x6D, 0x64, 0x6A, 0x6A, 0x64,
+							0x62, 0x66, 0x69, 0x68, 0x67, 0x6D, 0x70, 0x6E,
+							0x67, 0x64, 0x6E, 0x68, 0x65, 0x63, 0x6D, 0x66,
+							0x6C, 0x64, 0x64, 0x6A
+						]
+					}
+				}
+			};
+			var patcherStatus = {
+				w32: {
+					State:	0,
+					SubState: 0,
+					ReturnState: 0,
+					ReturnSubState: 0,
+					Buffer:	undefined,
+					Array:	undefined,
+					isLocal: false,
+					Pos: 0,
+					Find: {},
+					Replace: {},
+					Success: {},
+					TrackState: 0,
+					TrackSubState: 0,
+				},
+				w64: {
+					State:	0,
+					SubState: 0,
+					ReturnState: 0,
+					ReturnSubState: 0,
+					Buffer:	undefined,
+					Array:	undefined,
+					isLocal: false,
+					Pos: 0,
+					Find: {},
+					Replace: {},
+					Success: {},
+					TrackState: 0,
+					TrackSubState: 0,
+				},
+				l32: {
+					State:	0,
+					SubState: 0,
+					ReturnState: 0,
+					ReturnSubState: 0,
+					Buffer:	undefined,
+					Array:	undefined,
+					isLocal: false,
+					Pos: 0,
+					Find: {},
+					Replace: {},
+					Success: {},
+					TrackState: 0,
+					TrackSubState: 0,
+				},
+				l64: {
+					State:	0,
+					SubState: 0,
+					ReturnState: 0,
+					ReturnSubState: 0,
+					Buffer:	undefined,
+					Array:	undefined,
+					isLocal: false,
+					Pos: 0,
+					Find: {},
+					Replace: {},
+					Success: {},
+					TrackState: 0,
+					TrackSubState: 0,
+				},
+				b32: {
+					State:	0,
+					SubState: 0,
+					ReturnState: 0,
+					ReturnSubState: 0,
+					Buffer:	undefined,
+					Array:	undefined,
+					isLocal: false,
+					Pos: 0,
+					Find: {},
+					Replace: {},
+					Success: {},
+					TrackState: 0,
+					TrackSubState: 0,
+				},
+				b64: {
+					State:	0,
+					SubState: 0,
+					ReturnState: 0,
+					ReturnSubState: 0,
+					Buffer:	undefined,
+					Array:	undefined,
+					isLocal: false,
+					Pos: 0,
+					Find: {},
+					Replace: {},
+					Success: {},
+					TrackState: 0,
+					TrackSubState: 0,
+				},
+				mac: {
+					State:	0,
+					SubState: 0,
+					ReturnState: 0,
+					ReturnSubState: 0,
+					Buffer:	undefined,
+					Array:	undefined,
+					isLocal: false,
+					Pos: 0,
+					Find: {},
+					Replace: {},
+					Success: {},
+					TrackState: 0,
+					TrackSubState: 0,
+				}
+			}
+			
+			var timeout_handles = []    
+			function setTimeoutHandle( id, code, time ) {
+				if( id in timeout_handles ) {
+					clearTimeout( timeout_handles[id] )
+				}
+				timeout_handles[id] = setTimeout( code, time )
+			}
+			
+			function patcher_SetStatus(id, state) {
+				switch(state) {
+					case 0: // Waiting...
+						patcherElements[id].F.style.display = "";
+						patcherElements[id].L.style.display = "";
+						patcherElements[id].P.style.display = "none";
+						patcherElements[id].S.style.display = "";
+						patcherElements[id].S.innerHTML = "Localhost";
+						break;
+					case 1: // Working...
+						patcherElements[id].F.style.display = "none";
+						patcherElements[id].L.style.display = "none";
+						patcherElements[id].P.style.display = "";
+						patcherElements[id].S.style.display = "";
+						break;
+					case 2: // Done.
+						patcherElements[id].F.style.display = "none";
+						patcherElements[id].L.style.display = "none";
+						patcherElements[id].P.style.display = "";
+						patcherElements[id].S.style.display = "";
+						break;
+				}
+			}
+			function patcher_SetStatusMessage(id, status) {
+				patcherElements[id].S.innerHTML = status;
+			}
+			function patcher_Download(uri, elm, name) {
+				elm.href = uri;
+				elm.setAttribute("download", name);
+				elm.name = name;
+				elm.click();
+			}
+			
+			function patcher_OnFileSelect(key) {
+				if (key != "") {
+					patcherStatus[key].State = 1;
+					patcher_SetStatus(key, 1);
+				}
+			}
+			function patcher_OnReset(key) {
+				if (key != "") {
+					patcherStatus[key].State = 0;
+					patcherStatus[key].SubState = 0;
+					patcherStatus[key].ReturnState = 0;
+					patcherStatus[key].ReturnSubState = 0;
+					patcherStatus[key].Buffer =	undefined;
+					patcherStatus[key].Array =	undefined;
+					patcherStatus[key].isLocal = false;
+					patcherStatus[key].Pos = 0;
+					patcherStatus[key].Find = [];
+					patcherStatus[key].Replace = [];
+					patcherStatus[key].Success = false;
+					patcher_SetStatus(key, 0);
+				}
+			}
+			
+			patcherCount = 0;
+			function patcher_Callback() {
+				var instanceTime = Math.floor(131072 / patcherCount);
+				
+				for (var key in patcherStatus) {
+					if (patcherStatus.hasOwnProperty(key)) {
+						var obj = patcherStatus[key]
+						if (obj.TrackState != obj.State) {
+							console.log("Tracker '" + key + "': State " + obj.TrackState + " -> " + obj.State);
+							obj.TrackState = obj.State
+						}
+						if (obj.TrackSubState != obj.SubState) {
+							console.log("Tracker '" + key + "': SubState " + obj.TrackSubState + " -> " + obj.SubState);
+							obj.TrackSubState = obj.SubState
+						}
+						
+						switch(obj.State) {
+							case 1: // Load & Validate file.
+								switch(obj.SubState) {
+									case 0: // Load File.
+										var file = patcherElements[key].F.files[0];
+										
+										// Create FileReader Instance.
+										if (patcherStatus[key].Reader == undefined) {
+											patcherStatus[key].Reader = new FileReader();
+											patcherStatus[key].Reader.obj = obj;
+											patcherStatus[key].Reader.key = key;
+											
+											patcherStatus[key].Reader.onprogress = function(evt) {
+												var pct = evt.loaded / evt.total;
+												
+												patcherElements[this.key].P.value = pct * 100;
+												patcher_SetStatusMessage(this.key, "Loading " + Math.floor(pct * 100) + "%...");
+											}
+											patcherStatus[key].Reader.onload = function(evt) {
+												this.obj.Buffer = evt.target.result;
+												this.obj.Array = new Uint8Array(this.obj.Buffer);
+												
+												patcherElements[this.key].P.value = 100;
+												this.obj.State = this.obj.ReturnState;
+												this.obj.SubState = this.obj.ReturnSubState;
+											};
+										}
+										
+										doLog("(" + key + ") Beginning patching...");
+										
+										// Continue asynchronously
+										obj.ReturnState = 1;
+										obj.ReturnSubState = 1;
+										obj.State = 0;
+										obj.SubState = 0;
+										patcherStatus[key].Reader.readAsArrayBuffer(file);
+										break;
+									case 1: // Validate File.
+										patcher_SetStatusMessage(key, "Validating...");
+										
+										isWindows	= ((obj.Array[0] == 0x4D) && (obj.Array[1] == 0x5A) && (obj.Array[2] == 0x90) && (obj.Array[3] == 0x00));
+										isLinux		= ((obj.Array[0] == 0x7F) && (obj.Array[1] == 0x45) && (obj.Array[2] == 0x4C) && (obj.Array[3] == 0x46) && (obj.Array[7] == 0x00));
+										isFreeBSD	= ((obj.Array[0] == 0x7F) && (obj.Array[1] == 0x45) && (obj.Array[2] == 0x4C) && (obj.Array[3] == 0x46) && (obj.Array[7] == 0x09));
+										isMac		= ((obj.Array[0] == 0xCA) && (obj.Array[1] == 0xFE) && (obj.Array[2] == 0xBA) && (obj.Array[3] == 0xBE));
+										is64Bit		= false;
+										
+										if (isWindows) {
+											is64Bit = (obj.Array[0x3C] != 0x08);
+										} else if (isLinux || isFreeBSD) {
+											is64Bit = (obj.Array[0x04] == 0x02);
+										} else if (isMac) {
+											is64Bit = true;
+										}
+										
+										switch(key) {
+											case "w32":
+												if (!(isWindows == true && is64Bit == false)) {
+													obj.State = 0;
+												}
+												break;
+											case "w64":
+												if (!(isWindows == true && is64Bit == true)) {
+													obj.State = 0;
+												}
+												break;
+											case "l32":
+												if (!(isLinux == true && is64Bit == false)) {
+													obj.State = 0;
+												}
+												break;
+											case "l64":
+												if (!(isLinux == true && is64Bit == true)) {
+													obj.State = 0;
+												}
+												break;
+											case "b32":
+												if (!(isFreeBSD == true && is64Bit == false)) {
+													obj.State = 0;
+												}
+												break;
+											case "b64":
+												if (!(isFreeBSD == true && is64Bit == true)) {
+													obj.State = 0;
+												}
+												break;
+											case "mac":
+												if (!(isMac == true)) {
+													obj.State = 0;
+												}
+												break;
+										}
+										
+										if (obj.State != 0) { // File is valid.
+											obj.State = 2;
+											obj.SubState = 0;
+											patcher_SetStatusMessage(key, "Valid '"+key+"' Binary.");
+											doLog("(" + key + ") Binary is valid, continueing...");
+										} else {
+											patcher_SetStatusMessage(key, "Failed. <a href='#' onclick='javascript:patcher_OnReset(\""+key+"\");'>Reset</a>");
+											doLog("(" + key + ") Binary is invalid.");
+										}
+										break;
+									
+								}
+								break;
+							case 2: // Patch file.
+								switch(obj.SubState) {
+									case 0: // Set up
+										patcher_SetStatusMessage(key, "Preparing...");
+										patcherElements[key].P.value = 0;
+										
+										// Initialize Arrays
+										obj.Find = {};
+										obj.Replace = {};
+										obj.Success = {};
+										
+										// Set up data.
+										obj.Find[0] = patcherData.normal.from;
+										obj.Replace[0] = patcherData.normal.to;
+										obj.Success[0] = 0;
+										if (patcherElements[key].L.checked == true) {
+											var count = 1;
+											for (var k3 in patcherData.local) {
+												if (patcherData.local.hasOwnProperty(k3)) {
+													obj.Find[count] = patcherData.local[k3].from;
+													obj.Replace[count] = patcherData.local[k3].to;
+													obj.Success[count] = 0;
+													
+													if (patcherData.local[k3].hasOwnProperty(key)) {
+														obj.Find[count+key] = patcherData.local[k3][key].from;
+														obj.Replace[count+key] = patcherData.local[k3][key].to;
+														obj.Success[count+key] = 0;
+														console.log(k3+key);
+													}
+													
+													count++;
+												}
+											}
+										}
+										
+										doLog("(" + key + ") Patching has begun.");
+										
+										obj.ReturnState = 2;
+										obj.ReturnSubState = 2;
+										obj.State = 2;
+										obj.SubState = 1;
+										patcherCount += 1;
+										break;
+									case 1: // Scan & Replace
+										for (var k2 in obj.Find) {
+											if (obj.Find.hasOwnProperty(k2)) {
+												var fnd = obj.Find[k2];
+												for (var i = obj.Pos; (i < obj.Pos + instanceTime) && (i < obj.Array.length); i++) {
+													
+													// Do a sub-array search only when the space for it is there.
+													if ((i + fnd.length) <= obj.Array.length) {
+														// And only when the first byte matches.
+														if (obj.Array[i] == fnd[0]) {
+															var exit	= false;
+															var success	= true;
+															var j		= 0;
+															while (exit == false) {
+																if (obj.Array[i+j] != fnd[j]) {
+																	success = false;
+																	exit = true;
+																}
+																
+																j++;
+																if ((j == obj.Find[k2].length) || (i+j == obj.Array.length)) {
+																	exit = true;
+																}
+															}
+															
+															if (success == true) {
+																obj.Array.set(obj.Replace[k2], i);
+																console.log(k2 + " Success");
+																obj.Success[k2] += 1;
+																doLog("(" + key + ") Successfully applied patch '" + k2 + "'.");
+															}
+														}
+													}
+												}
+											}
+										}
+										obj.Pos = i;
+										
+										var pct = obj.Pos / obj.Array.length;
+										patcherElements[key].P.value = pct * 100;
+										patcher_SetStatusMessage(key, "Patching " + Math.floor(pct * 100) + "%...");
+										
+										if (obj.Pos == obj.Array.length) {
+											obj.State = obj.ReturnState;
+											obj.SubState = obj.ReturnSubState;
+										}
+										break;
+									case 2: // Validate success and show download link.
+										patcherCount -= 1;
+										
+										var fail = false;
+										for (var k2 in obj.Success) {
+											if (obj.Success.hasOwnProperty(k2)) {
+												if (obj.Success[k2] == 0) {
+													doLog("(" + key + ") Failed to apply patch '"+k2+"'.");
+													fail = true;
+												}
+											}
+										}
+										if (fail == false) {
+											var blob = new Blob([obj.Array]);
+											var blobReader = new FileReader();
+											blobReader.key = key;
+											blobReader.obj = obj;
+											blobReader.onloadend = function(evt) {
+												var name = patcherElements[this.key].F.files[0].name;
+												patcher_SetStatusMessage(this.key, "Success<a id='"+this.key+"-download'>.</a> <a href='#' onclick='javascript:patcher_OnReset(\""+this.key+"\");'>Reset</a>");
+												patcher_SetStatus(this.key, 2);
+												patcher_Download(evt.target.result, document.getElementById(this.key + "-download"), name);
+											}
+											blobReader.readAsDataURL(blob);
+											obj.State = 0;
+										} else {
+											patcher_SetStatusMessage(key, "Failed. <a href='#' onclick='javascript:patcher_OnReset(\""+key+"\");'>Reset</a>");
+											obj.State = 0;
+											obj.SubState = 0;
+										}
+										
+										break;
+								}
+								break;
+						}
+					}
+				}
+				setTimeoutHandle("cb", patcher_Callback, 10);
+			}
+			setTimeoutHandle("cb", patcher_Callback, 1);
+			
+			$(function() {
+				// Gather Elements and hide unused ones.
+				for (var key in patcherElements) {
+					if (patcherElements.hasOwnProperty(key)) {
+						patcherElements[key].F = document.getElementById(key + "-file");
+						patcherElements[key].L = document.getElementById(key + "-local");
+						patcherElements[key].S = document.getElementById(key + "-status");
+						patcherElements[key].P = document.getElementById(key + "-progress");
+						patcherElements[key].F.key = key;
+						patcherElements[key].F.onchange = function() {
+							patcher_OnFileSelect(this.key);
+						}
+						patcher_SetStatus(key, 0);
+					}
+				}
+			});
+		</script>
+	</head>
+	<body>
+		<h3>Teamspeak Server Patcher</h3>
+		<span>Simply upload your Teamspeak Server binary and this patcher will do all the work for you.<br>
+		<b>Do not close the tab while it is patching, or you will lose your progress.</b></span>
+		<hr>
+		<form style="width: 100%;">
+			<table style="width: 100%;">
+				<colgroup>
+					<col width="150px">
+					<col width="*">
+					<col width="150px">
+				</colgroup>
+				<!-- Windows 32-Bit -->
+				<tr>
+					<td>Windows 32-Bit:</td>
+					<td>
+						<input type="file" id="w32-file"/>
+						<progress id="w32-progress" max=100 style="width: 100%;" />
+					</td>
+					<td>
+						<input type="checkbox" id="w32-local" value="1" />
+						<span id="w32-status">Waiting...</span>
+					</td>
+				</tr>
+				<!-- Windows 64-Bit -->
+				<tr>
+					<td>Windows 64-Bit:</td>
+					<td>
+						<input type="file" id="w64-file"/>
+						<progress id="w64-progress" max=100 style="width: 100%;" />
+					</td>
+					<td>
+						<input type="checkbox" id="w64-local" value="1" />
+						<span id="w64-status">Waiting...</span>
+					</td>
+				</tr>
+				<!-- Linux 32-Bit -->
+				<tr>
+					<td>Linux 32-Bit:</td>
+					<td>
+						<input type="file" id="l32-file"/>
+						<progress id="l32-progress" max=100 style="width: 100%;" />
+					</td>
+					<td>
+						<input type="checkbox" id="l32-local" value="1" />
+						<span id="l32-status">Waiting...</span>
+					</td>
+				</tr>
+				<!-- Linux 64-Bit -->
+				<tr>
+					<td>Linux 64-Bit:</td>
+					<td>
+						<input type="file" id="l64-file"/>
+						<progress id="l64-progress" max=100 style="width: 100%;" />
+					</td>
+					<td>
+						<input type="checkbox" id="l64-local" value="1" />
+						<span id="l64-status">Waiting...</span>
+					</td>
+				</tr>
+				<!-- FreeBSD 32-Bit -->
+				<tr>
+					<td>FreeBSD 32-Bit:</td>
+					<td>
+						<input type="file" id="b32-file"/>
+						<progress id="b32-progress" max=100 style="width: 100%;" />
+					</td>
+					<td>
+						<input type="checkbox" id="b32-local" value="1" />
+						<span id="b32-status">Waiting...</span>
+					</td>
+				</tr>
+				<!-- FreeBSD 64-Bit -->
+				<tr>
+					<td>FreeBSD 64-Bit:</td>
+					<td>
+						<input type="file" id="b64-file"/>
+						<progress id="b64-progress" max=100 style="width: 100%;" />
+					</td>
+					<td>
+						<input type="checkbox" id="b64-local" value="1" />
+						<span id="b64-status">Waiting...</span>
+					</td>
+				</tr>
+				<!-- Mac -->
+				<tr>
+					<td>Mac:</td>
+					<td>
+						<input type="file" id="mac-file"/>
+						<progress id="mac-progress" max=100 style="width: 100%;" />
+					</td>
+					<td>
+						<input type="checkbox" id="mac-local" value="1" />
+						<span id="mac-status">Waiting...</span>
+					</td>
+				</tr>
+			</table>
+		</form>
+		<hr>
+		<center><b>Do you like my work? Consider donating!</b><br>
+		<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
+			<input type="hidden" name="cmd" value="_s-xclick">
+			<input type="hidden" name="hosted_button_id" value="SSU4MX9KED5ZC">
+			<input type="image" src="https://www.paypalobjects.com/en_US/GB/i/btn/btn_donateCC_LG.gif" border="0" name="submit" alt="PayPal – The safer, easier way to pay online.">
+			<img alt="" border="0" src="https://www.paypalobjects.com/de_DE/i/scr/pixel.gif" width="1" height="1">
+		</form>
+		<pre id="log" class="log" style="width: 98%; height: 50%; text-align: left; border: 1px inset grey; background: #EEE;"></pre>
+		</center>
+	</body>
+</html>
